@@ -1,5 +1,5 @@
 import { Queue } from "bullmq";
-import { redisConnection } from "../config/bullmq.js";
+import { bullmqConfig, redisConnection } from "../config/bullmq.js";
 import { EMAIL_QUEUE_NAME } from "./constatns.js";
 
 export interface EmailJobData {
@@ -10,7 +10,12 @@ export interface EmailJobData {
 export const emailQueue = new Queue<EmailJobData>(EMAIL_QUEUE_NAME, {
   connection: redisConnection,
   defaultJobOptions: {
-    removeOnComplete: 100,
-    removeOnFail: 500,
+    attempts: bullmqConfig.queue.maxRetries,
+    backoff: {
+      type: "exponential",
+      delay: bullmqConfig.queue.backoffDelayMs,
+    },
+    removeOnComplete: bullmqConfig.queue.removeOnComplete,
+    removeOnFail: bullmqConfig.queue.removeOnFail,
   },
 });

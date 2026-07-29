@@ -8,17 +8,33 @@ export const emailQueueEvents = new QueueEvents(EMAIL_QUEUE_NAME, {
 });
 
 emailQueueEvents.on("completed", ({ jobId }) => {
-  logger.info(`Job ${jobId} completed`);
+  logger.info("Queue event: job completed", {
+    bullJobId: jobId,
+  });
 });
 
 emailQueueEvents.on("failed", ({ jobId, failedReason }) => {
-  logger.error(`Job ${jobId} failed: ${failedReason}`);
+  logger.error("Queue event: job failed", undefined, {
+    bullJobId: jobId,
+    failureReason: failedReason,
+  });
 });
 
 emailQueueEvents.on("active", ({ jobId }) => {
-  logger.info(`Job ${jobId} is now active`);
+  logger.info("Queue event: job active", {
+    bullJobId: jobId,
+  });
 });
 
 emailQueueEvents.on("waiting", ({ jobId }) => {
-  logger.info(`Job ${jobId} entered waiting state`);
+  logger.info("Queue event: job waiting", {
+    bullJobId: jobId,
+  });
+});
+
+emailQueueEvents.on("delayed", ({ jobId, delay }) => {
+  logger.info("Queue event: job delayed", {
+    bullJobId: jobId,
+    delay,
+  });
 });
