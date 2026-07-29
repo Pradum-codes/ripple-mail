@@ -1,4 +1,5 @@
 import { PrismaClient, EmailStatus } from "@prisma/client";
+import { logger } from "../src/utils/logger.js";
 
 declare const process: {
   exit(code?: number): never;
@@ -7,7 +8,7 @@ declare const process: {
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  logger.info("🌱 Seeding database...");
 
   // -----------------------
   // User
@@ -86,12 +87,12 @@ async function main() {
     ],
   });
 
-  console.log("✅ Database seeded successfully!");
+  logger.info("✅ Database seeded successfully!");
 }
 
 main()
   .catch((error) => {
-    console.error(error);
+    loggerw.error(error);
     process.exit(1);
   })
   .finally(async () => {
