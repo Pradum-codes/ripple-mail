@@ -1,9 +1,7 @@
+import AppRoutes from './router/AppRoutes';
+
 function App() {
-  return (
-    <main>
-      <h1>ReachInbox Email Scheduler</h1>
-    </main>
-  );
+  return <AppRoutes />;
 }
 
 export default App;
