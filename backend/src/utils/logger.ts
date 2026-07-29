@@ -5,8 +5,11 @@ function log(level: LogLevel, message: string) {
 }
 
 export const logger = {
-  info(message: string) {
+  info(message: string, data?: any) {
     log("INFO", message);
+    if (data) {
+      console.log("Data:", data);
+    }
   },
 
   warn(message: string) {
