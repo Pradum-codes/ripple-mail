@@ -1,2 +1,15 @@
 export { default as ComposePanel } from './ComposePanel';
 export type { ComposePanelProps } from './ComposePanel';
+export { default as ComposeForm } from './ComposeForm';
+export type { ComposeFormValues } from './ComposeForm';
+export { default as ComposeActions } from './ComposeActions';
+export type { ComposeActionsProps } from './ComposeActions';
+export { default as SenderSection } from './SenderSection';
+export type { SenderSectionProps } from './SenderSection';
+export { default as SubjectSection } from './SubjectSection';
+export type { SubjectSectionProps } from './SubjectSection';
+export { default as BodySection } from './BodySection';
+export { default as RecipientsSection } from './RecipientsSection';
+export { default as ScheduleSection } from './ScheduleSection';
+export type { ScheduleSectionProps } from './ScheduleSection';
+export { default as AdvancedOptionsSection } from './AdvancedOptionsSection';
