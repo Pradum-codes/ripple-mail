@@ -1,18 +1,21 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+import { AppError } from "../errors/AppError.js";
 import { QueueService } from "../services/queue.service.js";
 
 export const addTestJob = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  // const job = await QueueService.addJob("test-email", {
-  //   message: "Hello from BullMQ!",
-  // });
+  const emailJobId = Number(req.body?.emailJobId);
+
+  if (!Number.isInteger(emailJobId) || emailJobId <= 0) {
+    throw new AppError("A valid emailJobId is required.", 400);
+  }
 
   const job = await QueueService.addDelayedJob(
     "test-email",
     {
-        message: "Delayed BullMQ Job"
+      emailJobId,
     },
     60_000
   );
@@ -22,4 +25,3 @@ export const addTestJob = async (
     message: "Test job added successfully.",
   });
 };
-

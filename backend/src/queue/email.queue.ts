@@ -3,7 +3,8 @@ import { redisConnection } from "../config/bullmq.js";
 import { EMAIL_QUEUE_NAME } from "./constatns.js";
 
 export interface EmailJobData {
-  message: string;
+  emailJobId: number;
+  campaignId?: number;
 }
 
 export const emailQueue = new Queue<EmailJobData>(EMAIL_QUEUE_NAME, {
