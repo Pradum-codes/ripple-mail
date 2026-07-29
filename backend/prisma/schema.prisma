@@ -6,3 +6,72 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum EmailStatus {
+  SCHEDULED
+  PROCESSING
+  SENT
+  FAILED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  googleId  String   @unique
+  name      String
+  email     String   @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  campaigns Campaign[]
+}
+
+model Sender {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  smtpHost  String
+  smtpPort  Int
+  username  String
+  password  String
+  createdAt DateTime @default(now())
+
+  campaigns Campaign[]
+}
+
+model Campaign {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  senderId        Int
+  subject         String
+  body            String
+  startTime       DateTime
+  delaySeconds    Int
+  hourlyLimit     Int
+  totalRecipients Int
+  createdAt       DateTime @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  sender    Sender     @relation(fields: [senderId], references: [id], onDelete: Restrict)
+  emailJobs EmailJob[]
+
+  @@index([userId])
+  @@index([senderId])
+}
+
+model EmailJob {
+  id            Int         @id @default(autoincrement())
+  campaignId    Int
+  recipient     String
+  scheduledAt   DateTime
+  sentAt        DateTime?
+  bullJobId     String?
+  status        EmailStatus @default(SCHEDULED)
+  failureReason String?
+  retryCount    Int         @default(0)
+  createdAt     DateTime    @default(now())
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([status])
+  @@index([scheduledAt])
+}
