@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { RefreshCw } from 'lucide-react';
+import Button from '@/components/common/Button';
 import Select from '@/components/common/Select';
 import Spinner from '@/components/common/Spinner';
 import EmptyState from '@/components/common/EmptyState';
@@ -10,11 +11,12 @@ import { formatSenderLabel } from '@/utils/formatSenderLabel';
 export interface SenderSectionProps {
   senderId: string;
   onSenderIdChange: (senderId: string) => void;
+  disabled?: boolean;
+  error?: string;
 }
 
-function SenderSection({ senderId, onSenderIdChange }: SenderSectionProps) {
-  const { senders, loading, error, refresh } = useSenders();
-
+function SenderSection({ senderId, onSenderIdChange, disabled = false, error: validationError }: SenderSectionProps) {
+  const { senders, loading, error: senderLoadError, refresh } = useSenders();
   const options = useMemo(
     () =>
       senders.map((sender) => ({
@@ -24,12 +26,6 @@ function SenderSection({ senderId, onSenderIdChange }: SenderSectionProps) {
     [senders],
   );
 
-  useEffect(() => {
-    if (!senderId && options.length > 0) {
-      onSenderIdChange(options[0].value);
-    }
-  }, [onSenderIdChange, options, senderId]);
-
   return (
     <ComposeFieldRow label="From">
       {loading ? (
@@ -37,12 +33,12 @@ function SenderSection({ senderId, onSenderIdChange }: SenderSectionProps) {
           <Spinner size="sm" />
           Loading senders...
         </div>
-      ) : error || options.length === 0 ? (
+      ) : senderLoadError ? (
         <EmptyState
-          title="No senders available"
-          description={error ?? 'Add a sender configuration before scheduling a campaign.'}
+          title="Unable to load senders"
+          description={senderLoadError}
           action={{
-            label: 'Refresh senders',
+            label: 'Retry',
             onClick: () => {
               void refresh();
             },
@@ -50,6 +46,20 @@ function SenderSection({ senderId, onSenderIdChange }: SenderSectionProps) {
             icon: <RefreshCw className="size-4" aria-hidden="true" />,
           }}
         />
+      ) : options.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-4">
+          <p className="text-sm font-medium text-slate-900">No sender accounts available.</p>
+          <div className="mt-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => undefined}
+              disabled={disabled}
+            >
+              Add Sender
+            </Button>
+          </div>
+        </div>
       ) : (
         <Select
           label="Sender account"
@@ -61,6 +71,8 @@ function SenderSection({ senderId, onSenderIdChange }: SenderSectionProps) {
           onChange={(event) => onSenderIdChange(event.target.value)}
           options={options}
           required
+          disabled={disabled}
+          error={validationError}
         />
       )}
     </ComposeFieldRow>

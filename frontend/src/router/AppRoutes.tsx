@@ -9,6 +9,7 @@ import ScheduledEmailsPage from '../pages/ScheduledEmailsPage';
 import SentEmailsPage from '../pages/SentEmailsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import { routePaths } from './routePaths';
+import SenderSettingsPage from '@/features/senders/pages/SenderSettingsPage';
 
 function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ function AppRoutes() {
           <Route path={routePaths.compose} element={<ComposeEmailPage />} />
           <Route path={routePaths.scheduled} element={<ScheduledEmailsPage />} />
           <Route path={routePaths.sent} element={<SentEmailsPage />} />
+          <Route path={routePaths.senderSettings} element={<SenderSettingsPage />} />
         </Route>
       </Route>
 

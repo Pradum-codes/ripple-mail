@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RefreshCw } from 'lucide-react';
 import Button from '@/components/common/Button';
 import SearchBar from '@/components/common/SearchBar';
@@ -30,8 +30,10 @@ const columns: ReadonlyArray<TableColumn<EmailJobWithSubject>> = [
 
 function ScheduledEmailsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { emails, loading, error, refresh } = useScheduledEmails();
   const [searchValue, setSearchValue] = useState('');
+  const successMessage = (location.state as { message?: string } | null)?.message ?? null;
 
   const emptyState = useMemo(
     () => ({
@@ -53,6 +55,15 @@ function ScheduledEmailsPage() {
           Review queued messages before they are sent.
         </p>
       </section>
+
+      {successMessage ? (
+        <section
+          role="status"
+          className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-800"
+        >
+          <p className="font-medium">{successMessage}</p>
+        </section>
+      ) : null}
 
       <SearchBar
         value={searchValue}

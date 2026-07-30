@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { CalendarClock, LayoutDashboard, PencilLine, Send, X } from 'lucide-react';
+import { CalendarClock, LayoutDashboard, PencilLine, Send, Settings2, X } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import Button from '@/components/common/Button';
 
@@ -216,5 +216,10 @@ export const defaultSidebarItems: ReadonlyArray<SidebarItem> = [
     label: 'Sent',
     href: '/sent',
     icon: <Send className="size-4" aria-hidden="true" />,
+  },
+  {
+    label: 'Sender Settings',
+    href: '/settings/senders',
+    icon: <Settings2 className="size-4" aria-hidden="true" />,
   },
 ];

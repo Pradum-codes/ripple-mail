@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { senderApi } from '@/api';
+import { useEffect, useState } from 'react';
+import { normalizeApiError, senderApi } from '@/api';
 import type { Sender } from '@/types/sender';
 
 export interface UseSendersResult {
@@ -14,7 +14,7 @@ function useSenders(): UseSendersResult {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadSenders = useCallback(async () => {
+  async function loadSenders() {
     setLoading(true);
     setError(null);
 
@@ -22,18 +22,18 @@ function useSenders(): UseSendersResult {
       const response = await senderApi.getSenders();
       setSenders(response.data);
     } catch (caughtError) {
-      const message =
-        caughtError instanceof Error ? caughtError.message : 'Failed to load senders.';
+      const normalizedError = normalizeApiError(caughtError);
+      const message = normalizedError.message || 'Failed to load senders.';
       setError(message);
       setSenders([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }
 
   useEffect(() => {
     void loadSenders();
-  }, [loadSenders]);
+  }, []);
 
   return {
     senders,
