@@ -118,6 +118,141 @@ Returns a single campaign by numeric ID.
 - `200` when found
 - `404` when the campaign does not exist
 
+## Senders
+
+### Create Sender
+
+```http
+POST /api/senders
+```
+
+Request body:
+
+```json
+{
+  "email": "ops@example.com",
+  "smtpHost": "smtp.gmail.com",
+  "smtpPort": 587,
+  "username": "ops@example.com",
+  "password": "app-password"
+}
+```
+
+Success response:
+
+```json
+{
+  "id": 1,
+  "email": "ops@example.com",
+  "username": "ops@example.com",
+  "createdAt": "2026-07-30T10:15:00.000Z"
+}
+```
+
+Validation rules:
+
+- `email`: required valid email address
+- `smtpHost`: required non-empty string
+- `smtpPort`: required integer between `1` and `65535`
+- `username`: required non-empty string
+- `password`: required non-empty string
+
+Behavior:
+
+- SMTP credentials are verified with `transporter.verify()` before the sender is saved.
+- Invalid SMTP credentials return `400` with code `SMTP_VERIFICATION_FAILED`.
+- Duplicate sender emails return `409` with code `DUPLICATE_EMAIL`.
+
+### List Senders
+
+```http
+GET /api/senders?page=1&limit=10
+```
+
+Response:
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "email": "ops@example.com",
+      "username": "ops@example.com",
+      "createdAt": "2026-07-30T10:15:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+### Get Sender
+
+```http
+GET /api/senders/:id
+```
+
+Success response:
+
+```json
+{
+  "id": 1,
+  "email": "ops@example.com",
+  "username": "ops@example.com",
+  "createdAt": "2026-07-30T10:15:00.000Z"
+}
+```
+
+### Update Sender
+
+```http
+PATCH /api/senders/:id
+```
+
+Request body example:
+
+```json
+{
+  "smtpHost": "smtp.office365.com",
+  "smtpPort": 587,
+  "username": "ops@example.com",
+  "password": "new-app-password"
+}
+```
+
+Success response:
+
+```json
+{
+  "id": 1,
+  "email": "ops@example.com",
+  "username": "ops@example.com",
+  "createdAt": "2026-07-30T10:15:00.000Z"
+}
+```
+
+Behavior:
+
+- `PATCH` accepts any subset of sender fields.
+- At least one field is required.
+- The full merged SMTP configuration is verified before the update is saved.
+
+### Delete Sender
+
+```http
+DELETE /api/senders/:id
+```
+
+Responses:
+
+- `204` when deleted
+- `404` when the sender does not exist
+- `409` when the sender is still referenced by campaigns
+
 ## Emails
 
 ### List Scheduled Emails
@@ -193,3 +328,4 @@ If PostgreSQL, Redis, or the queue is unavailable, the endpoint returns a degrad
 - Campaign creation persists the campaign, creates one `EmailJob` per recipient, and schedules BullMQ jobs.
 - The worker loads campaign and sender data from the database when processing queued email jobs.
 - Pagination defaults to `page=1` and `limit=10` across list endpoints.
+- Sender API responses never expose SMTP passwords or stored credentials.

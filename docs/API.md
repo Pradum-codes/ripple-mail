@@ -103,6 +103,113 @@ Supported query params:
 GET /api/campaigns/:id
 ```
 
+## Sender APIs
+
+### Create Sender
+
+```http
+POST /api/senders
+```
+
+Request body:
+
+```json
+{
+  "email": "ops@example.com",
+  "smtpHost": "smtp.gmail.com",
+  "smtpPort": 587,
+  "username": "ops@example.com",
+  "password": "app-password"
+}
+```
+
+Response:
+
+```json
+{
+  "id": 1,
+  "email": "ops@example.com",
+  "username": "ops@example.com",
+  "createdAt": "2026-07-30T10:15:00.000Z"
+}
+```
+
+Validation rules:
+
+- `email` must be a valid email address
+- `smtpHost` is required
+- `smtpPort` must be an integer from `1` to `65535`
+- `username` is required
+- `password` is required
+
+SMTP verification:
+
+- `POST /api/senders` verifies SMTP credentials before insert
+- `PATCH /api/senders/:id` verifies the merged sender config before update
+- Failed verification returns `400` with code `SMTP_VERIFICATION_FAILED`
+
+### List Senders
+
+```http
+GET /api/senders?page=1&limit=10
+```
+
+Response:
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "email": "ops@example.com",
+      "username": "ops@example.com",
+      "createdAt": "2026-07-30T10:15:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+### Get Sender
+
+```http
+GET /api/senders/:id
+```
+
+### Update Sender
+
+```http
+PATCH /api/senders/:id
+```
+
+Example request body:
+
+```json
+{
+  "smtpHost": "smtp.office365.com",
+  "smtpPort": 587,
+  "username": "ops@example.com",
+  "password": "new-app-password"
+}
+```
+
+### Delete Sender
+
+```http
+DELETE /api/senders/:id
+```
+
+Responses:
+
+- `204` on success
+- `404` if not found
+- `409` if the sender is referenced by campaigns
+
 ## Email Jobs
 
 ### Scheduled Emails

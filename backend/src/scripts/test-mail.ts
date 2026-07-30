@@ -11,7 +11,14 @@ async function runMailTest(): Promise<void> {
     await verifyMailConnection();
 
     const info = await mailService.sendEmail({
-      from: smtpConfig.from,
+      sender: {
+        id: 0,
+        email: smtpConfig.user,
+        smtpHost: smtpConfig.host,
+        smtpPort: smtpConfig.port,
+        username: smtpConfig.user,
+        password: smtpConfig.pass,
+      },
       to: smtpConfig.user,
       subject: "SMTP configuration test",
       text: "This is a temporary SMTP verification email sent outside BullMQ.",

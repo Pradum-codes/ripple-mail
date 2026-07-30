@@ -136,9 +136,12 @@ export function classifyEmailFailure(error: unknown): EmailFailureClassification
       /invalid login/,
       /bad credentials/,
       /invalid smtp configuration/,
+      /missing smtp configuration/,
       /missing smtp/,
       /sender email missing/,
       /missing sender/,
+      /sender not found/,
+      /missing sender account/,
       /unsupported authentication/,
       /invalid host/,
     ])

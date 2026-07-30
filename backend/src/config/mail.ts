@@ -10,6 +10,13 @@ type SmtpConfig = {
   from: string;
 };
 
+export type SmtpVerificationInput = {
+  host: string;
+  port: number;
+  user: string;
+  pass: string;
+};
+
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
 
@@ -66,22 +73,35 @@ function loadSmtpConfig(): SmtpConfig {
 
 export const smtpConfig = loadSmtpConfig();
 
-// Create the transporter once so the process reuses a consistent SMTP configuration.
-// `secure` is driven entirely by the environment because production providers differ:
-// port 465 typically uses TLS from the start, while ports such as 587 usually upgrade later.
-export const transporter: Transporter = nodemailer.createTransport({
-  host: smtpConfig.host,
-  port: smtpConfig.port,
-  secure: smtpConfig.secure,
-  auth: {
-    user: smtpConfig.user,
-    pass: smtpConfig.pass,
-  },
-});
+export function isSecureSmtpPort(port: number): boolean {
+  return port === 465;
+}
+
+export function createSmtpTransport(
+  config: SmtpVerificationInput,
+  secure = isSecureSmtpPort(config.port),
+): Transporter {
+  return nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
+}
 
 export async function verifyMailConnection(): Promise<void> {
+  const verificationTransporter = createSmtpTransport({
+    host: smtpConfig.host,
+    port: smtpConfig.port,
+    user: smtpConfig.user,
+    pass: smtpConfig.pass,
+  }, smtpConfig.secure);
+
   try {
-    await transporter.verify();
+    await verificationTransporter.verify();
     logger.info(
       `SMTP connection verified for ${smtpConfig.host}:${smtpConfig.port} (${smtpConfig.from})`,
     );
@@ -95,5 +115,29 @@ export async function verifyMailConnection(): Promise<void> {
     );
 
     throw mailError;
+  } finally {
+    verificationTransporter.close();
+  }
+}
+
+export async function verifySmtpConnection(
+  config: SmtpVerificationInput,
+): Promise<void> {
+  const verificationTransporter = createSmtpTransport(config);
+
+  try {
+    await verificationTransporter.verify();
+  } catch (error) {
+    const mailError =
+      error instanceof Error ? error : new Error("Unknown SMTP verification error");
+
+    logger.error(
+      `Failed to verify SMTP connection for ${config.host}:${config.port}`,
+      mailError,
+    );
+
+    throw mailError;
+  } finally {
+    verificationTransporter.close();
   }
 }

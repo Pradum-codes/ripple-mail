@@ -87,10 +87,16 @@ export async function processEmailWorkerJob(
     return;
   }
 
+  if (!emailJob.campaign.sender) {
+    throw new Error("Sender not found for campaign");
+  }
+
+  const sender = emailJob.campaign.sender;
+
   if (emailJob.status === EmailStatus.SENT) {
     logger.info("Email already sent, skipping duplicate worker execution", {
       ...getJobLogContext(job, startedAt, maxAttempts),
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
       emailJobId: emailJob.id,
       recipient: emailJob.recipient,
       emailJobStatus: emailJob.status,
@@ -101,7 +107,7 @@ export async function processEmailWorkerJob(
   const rateLimiterService =
     dependencies.rateLimiterService ?? (await getRateLimiterService());
   const rateLimitResult = await rateLimiterService.acquire(
-    emailJob.campaign.sender.id,
+    sender.id,
   );
 
   if (!rateLimitResult.allowed) {
@@ -112,7 +118,7 @@ export async function processEmailWorkerJob(
 
     logger.warn("Hourly rate limit reached", {
       ...getJobLogContext(job, startedAt, maxAttempts),
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
       emailJobId: emailJob.id,
       recipient: emailJob.recipient,
       currentTime: currentTime.toISOString(),
@@ -126,7 +132,7 @@ export async function processEmailWorkerJob(
 
     logger.info("BullMQ job rescheduled after rate limit", {
       ...getJobLogContext(job, startedAt, maxAttempts),
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
       emailJobId: emailJob.id,
       recipient: emailJob.recipient,
       currentTime: currentTime.toISOString(),
@@ -149,30 +155,41 @@ export async function processEmailWorkerJob(
 
     logger.info("Email marked PROCESSING", {
       ...getJobLogContext(job, startedAt, maxAttempts),
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
+      senderEmail: sender.email,
       emailJobId: emailJob.id,
       recipient: emailJob.recipient,
       emailJobStatus: EmailStatus.PROCESSING,
     });
 
-    if (!emailJob.campaign.sender.email) {
-      throw new Error("Sender email missing");
-    }
-
     logger.info("Sending email", {
       ...getJobLogContext(job, startedAt, maxAttempts),
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
+      senderEmail: sender.email,
       emailJobId: emailJob.id,
       recipient: emailJob.recipient,
-      sender: emailJob.campaign.sender.email,
       subject: emailJob.campaign.subject,
     });
 
     const info = await mailService.sendEmail({
-      from: emailJob.campaign.sender.email,
+      sender: {
+        id: sender.id,
+        email: sender.email,
+        smtpHost: sender.smtpHost,
+        smtpPort: sender.smtpPort,
+        username: sender.username,
+        password: sender.password,
+      },
       to: emailJob.recipient,
       subject: emailJob.campaign.subject,
       text: emailJob.campaign.body,
+      context: {
+        campaignId: emailJob.campaignId,
+        emailJobId: emailJob.id,
+        senderId: sender.id,
+        senderEmail: sender.email,
+        recipientEmail: emailJob.recipient,
+      },
     });
 
     const sentAt = new Date();
@@ -191,13 +208,15 @@ export async function processEmailWorkerJob(
       recipient: emailJob.recipient,
       messageId: info.messageId,
       sentAt: updatedEmailJob.sentAt?.toISOString() ?? sentAt.toISOString(),
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
+      senderEmail: sender.email,
     });
 
     logger.info("Email send spacing configured", {
       ...getJobLogContext(job, startedAt, maxAttempts),
       emailJobId: emailJob.id,
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
+      senderEmail: sender.email,
       delayDurationMs: configuredDelayMs,
     });
 
@@ -205,7 +224,8 @@ export async function processEmailWorkerJob(
       logger.info("Email send delay starting", {
         ...getJobLogContext(job, startedAt, maxAttempts),
         emailJobId: emailJob.id,
-        senderId: emailJob.campaign.sender.id,
+        senderId: sender.id,
+        senderEmail: sender.email,
         delayDurationMs: configuredDelayMs,
       });
 
@@ -214,7 +234,8 @@ export async function processEmailWorkerJob(
       logger.info("Email send delay ended", {
         ...getJobLogContext(job, startedAt, maxAttempts),
         emailJobId: emailJob.id,
-        senderId: emailJob.campaign.sender.id,
+        senderId: sender.id,
+        senderEmail: sender.email,
         delayDurationMs: configuredDelayMs,
       });
     }
@@ -227,7 +248,8 @@ export async function processEmailWorkerJob(
       logger.warn("Retryable email failure", {
         ...getJobLogContext(job, startedAt, maxAttempts),
         campaignId: emailJob.campaignId,
-        senderId: emailJob.campaign.sender.id,
+        senderId: sender.id,
+        senderEmail: sender.email,
         recipient: emailJob.recipient,
         errorType: classification.reason,
         errorMessage: failureReason,
@@ -238,7 +260,8 @@ export async function processEmailWorkerJob(
         logger.info("Retry scheduled", {
           ...getJobLogContext(job, startedAt, maxAttempts),
           campaignId: emailJob.campaignId,
-          senderId: emailJob.campaign.sender.id,
+          senderId: sender.id,
+          senderEmail: sender.email,
           recipient: emailJob.recipient,
           errorType: classification.reason,
           errorMessage: failureReason,
@@ -261,7 +284,8 @@ export async function processEmailWorkerJob(
     logger.error("Permanent email failure", error instanceof Error ? error : undefined, {
       ...getJobLogContext(job, startedAt, maxAttempts),
       campaignId: emailJob.campaignId,
-      senderId: emailJob.campaign.sender.id,
+      senderId: sender.id,
+      senderEmail: sender.email,
       recipient: emailJob.recipient,
       errorType: classification.reason,
       errorMessage: failureReason,
@@ -298,6 +322,7 @@ export async function finalizeRetryableEmailFailure(
           sender: {
             select: {
               id: true,
+              email: true,
             },
           },
         },
@@ -330,6 +355,7 @@ export async function finalizeRetryableEmailFailure(
     ...getJobLogContext(job, undefined, maxAttempts, attemptNumber),
     emailJobId: emailJob.id,
     senderId: emailJob.campaign.sender.id,
+    senderEmail: emailJob.campaign.sender.email,
     recipient: emailJob.recipient,
     errorType: classification.reason,
     errorMessage: classification.message,
