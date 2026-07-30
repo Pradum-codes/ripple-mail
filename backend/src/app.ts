@@ -8,6 +8,8 @@ import emailRoutes from "./routes/email.routes.js";
 import healthRoutes from "./routes/health.routes.js";
 import senderRoutes from "./routes/sender.routes.js";
 import testRoutes from "./routes/test.route.js";
+import authRoutes from "./routes/auth.routes.js";
+import { authenticate } from "./middleware/auth.middleware.js";
 
 const app = express();
 
@@ -17,10 +19,11 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
-app.use("/api/campaigns", campaignRoutes);
-app.use("/api/emails", emailRoutes);
-app.use("/api/health", healthRoutes);
-app.use("/api/senders", senderRoutes);
+app.use("/api/campaigns", authenticate, campaignRoutes);
+app.use("/api/emails", authenticate,emailRoutes);
+app.use("/api/health", authenticate, healthRoutes);
+app.use("/api/senders", authenticate, senderRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/test", testRoutes);
 
 app.get("/", (_req, res) => {

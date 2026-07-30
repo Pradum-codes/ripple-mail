@@ -1,11 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import useMockAuth from '../auth/useMockAuth';
+import { useAuth } from '../auth';
+import { routePaths } from '../router/routePaths';
 
 function RequireAuth() {
-  const { isAuthenticated } = useMockAuth();
+  const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={routePaths.login} replace />;
   }
 
   return <Outlet />;
