@@ -44,11 +44,11 @@ function Header({
         {menuButton}
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-slate-900 text-sm font-semibold text-white">
-            {logoText}
+            <img src='/favicon.svg'/>
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.24em] text-slate-500">
-              ReachInbox
+              Ripple Mail
             </p>
             <h1 className="text-base font-semibold text-slate-900 md:text-lg">{title}</h1>
           </div>

@@ -16,7 +16,7 @@ function LoginPage() {
       <div className="w-full max-w-md rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
         <div className="space-y-3 text-center">
           <p className="text-sm font-medium uppercase tracking-[0.24em] text-stone-500">
-            ReachInbox
+            Ripple Mail
           </p>
           <h1 className="text-3xl font-semibold text-stone-900">Sign in</h1>
           <p className="text-sm leading-6 text-stone-600">

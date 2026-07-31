@@ -9,7 +9,7 @@ import {
 import { setAuthTokenResolver } from '@/api';
 import type { LoginResponse } from '@/api/auth';
 
-const AUTH_STORAGE_KEY = 'reachinbox.auth';
+const AUTH_STORAGE_KEY = 'ripplemail.auth';
 
 interface AuthUser {
   id: number;

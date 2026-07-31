@@ -1,0 +1,71 @@
+<svg viewBox="250 100 1250 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="wingTop2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+
+    <linearGradient id="wingBottom2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#1E3A8A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Entire logo -->
+  <g transform="translate(220,0)">
+
+    <!-- Plane -->
+    <g transform="translate(430,370) rotate(-30)">
+      <!-- Wake / ripple trail -->
+      <path d="M -190 -40 Q -260 -50 -330 -35"
+            fill="none"
+            stroke="#2DD4BF"
+            stroke-width="16"
+            stroke-linecap="round"
+            opacity="0.9"/>
+
+      <path d="M -190 5 Q -270 10 -355 22"
+            fill="none"
+            stroke="#2DD4BF"
+            stroke-width="16"
+            stroke-linecap="round"
+            opacity="0.55"/>
+
+      <path d="M -190 50 Q -280 65 -380 88"
+            fill="none"
+            stroke="#2DD4BF"
+            stroke-width="16"
+            stroke-linecap="round"
+            opacity="0.3"/>
+
+      <!-- Paper plane -->
+      <path d="M 300 0 L -170 -105 L -30 0 Z"
+            fill="url(#wingTop2)"/>
+
+      <path d="M 300 0 L -30 0 L -170 105 Z"
+            fill="url(#wingBottom2)"/>
+    </g>
+
+    <!-- Wordmark -->
+    <text
+      x="700"
+      y="400"
+      font-family="Arial, Helvetica, sans-serif"
+      font-weight="800"
+      font-size="140"
+      fill="#1E293B">
+      Ripple
+    </text>
+
+    <text
+      x="700"
+      y="540"
+      font-family="Arial, Helvetica, sans-serif"
+      font-weight="800"
+      font-size="140"
+      fill="#2DD4BF">
+      Mail
+    </text>
+
+  </g>
+</svg>

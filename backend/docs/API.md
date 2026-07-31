@@ -50,7 +50,7 @@ Request body:
 ```json
 {
   "senderId": "1",
-  "subject": "Welcome to ReachInbox",
+  "subject": "Welcome to Ripple Mail",
   "body": "Hello, this is a scheduled campaign.",
   "startTime": "2026-07-29T12:00:00.000Z",
   "delaySeconds": 60,

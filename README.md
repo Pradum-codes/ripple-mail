@@ -1,6 +1,6 @@
-# Email Job Scheduler
+<img src="/assets/ripple-mail-logo.svg" alt="Ripple Mail Logo" width="500" height="400">
 
-A full-stack email scheduling application built as part of the ReachInbox Software Development Intern assignment.
+# Ripple Mail
 
 The project allows users to schedule emails for future delivery using a REST API and a background job processing system powered by BullMQ and Redis.
 
@@ -51,7 +51,7 @@ Example:
 PORT=5000
 NODE_ENV=development
 
-DATABASE_URL="postgresql://username:password@localhost:5432/reachinbox_db"
+DATABASE_URL="postgresql://username:password@localhost:5432/ripple_mail_db"
 
 REDIS_HOST=localhost
 REDIS_PORT=6379

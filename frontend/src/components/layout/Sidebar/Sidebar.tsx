@@ -143,7 +143,7 @@ function Sidebar({ items, isMobileOpen, onCloseMobile, className }: SidebarProps
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Navigation</p>
-            <p className="mt-1 text-sm font-semibold text-slate-900">ReachInbox</p>
+            <p className="mt-1 text-sm font-semibold text-slate-900">Ripple Mail</p>
           </div>
           <Button
             ref={closeButtonRef}
@@ -176,12 +176,12 @@ function Sidebar({ items, isMobileOpen, onCloseMobile, className }: SidebarProps
         )}
       >
         <div className="flex items-center gap-3 border-b border-slate-200 px-5 py-4">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-slate-900 text-sm font-semibold text-white">
-            R
+          <div className="flex size-10 items-center justify-center rounded-xl text-sm font-semibold text-white">
+            <img src='/favicon.svg'/>
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.24em] text-slate-500">
-              ReachInbox
+              Ripple Mail
             </p>
             <p className="text-base font-semibold text-slate-900">Navigation</p>
           </div>

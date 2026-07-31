@@ -50,7 +50,7 @@ async function main() {
     data: {
       userId: user.id,
       senderId: sender.id,
-      subject: "Welcome to ReachInbox",
+      subject: "Welcome to Ripple Mail",
       body: "Hello {{name}}, this is a test email.",
       startTime: new Date(),
       delaySeconds: 60,
@@ -92,7 +92,7 @@ async function main() {
 
 main()
   .catch((error) => {
-    loggerw.error(error);
+    logger.error(error);
     process.exit(1);
   })
   .finally(async () => {
