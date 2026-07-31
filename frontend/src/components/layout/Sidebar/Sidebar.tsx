@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { CalendarClock, LayoutDashboard, PencilLine, Send, Settings2, X } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import Button from '@/components/common/Button';
+import SidebarUserMenu from '../SidebarUserMenu';
 
 export interface SidebarItem {
   label: string;
@@ -160,6 +161,8 @@ function Sidebar({ items, isMobileOpen, onCloseMobile, className }: SidebarProps
         <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Primary">
           <div className="space-y-1">{desktopItems}</div>
         </nav>
+
+        <SidebarUserMenu />
       </div>
     </div>
   ) : null;
@@ -168,7 +171,7 @@ function Sidebar({ items, isMobileOpen, onCloseMobile, className }: SidebarProps
     <>
       <aside
         className={cn(
-          'hidden h-screen w-72 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex',
+          'sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex',
           className,
         )}
       >
@@ -187,6 +190,8 @@ function Sidebar({ items, isMobileOpen, onCloseMobile, className }: SidebarProps
         <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Primary">
           <div className="space-y-1">{desktopItems}</div>
         </nav>
+
+        <SidebarUserMenu />
       </aside>
 
       {mobileDrawer}
