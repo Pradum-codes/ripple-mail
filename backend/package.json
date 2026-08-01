@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "seed": "tsx prisma/seed.ts",
-    "worker": "tsx watch src/worker.ts"
+    "worker": "tsx watch src/worker.ts",
+    "worker:prod": "node dist/worker.js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
