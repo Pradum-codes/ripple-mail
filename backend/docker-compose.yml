@@ -1,5 +1,4 @@
 services:
-
   api:
     build: .
     container_name: api
@@ -10,6 +9,7 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      - postgres
 
   worker:
     build: .
@@ -20,6 +20,7 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      - postgres
 
   redis:
     image: redis:7-alpine
@@ -33,9 +34,9 @@ services:
     container_name: postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ripplemail
-      POSTGRES_PASSWORD: CHANGE_THIS_TO_A_STRONG_PASSWORD
-      POSTGRES_DB: ripplemail
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
