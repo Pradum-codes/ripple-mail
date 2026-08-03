@@ -1,4 +1,9 @@
-export { apiClient, normalizeApiError, setAuthTokenResolver } from './client';
+export {
+  apiClient,
+  normalizeApiError,
+  setAuthTokenResolver,
+  setServiceUnavailableHandler,
+} from './client';
 export { campaignApi, createCampaign, getCampaign, getCampaigns } from './campaignApi';
 export { emailJobApi, getFailedEmails, getScheduledEmails, getSentEmails } from './emailJobApi';
 export {

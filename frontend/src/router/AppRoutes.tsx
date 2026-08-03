@@ -3,6 +3,7 @@ import RequireAuth from '../components/RequireAuth';
 import AppLayout from '../layouts/AppLayout';
 import AuthLayout from '../layouts/AuthLayout';
 import LoginPage from '../pages/LoginPage';
+import MaintenancePage from '../pages/MaintenancePage';
 import DashboardPage from '../pages/DashboardPage';
 import ComposeEmailPage from '../pages/ComposeEmailPage';
 import ScheduledEmailsPage from '../pages/ScheduledEmailsPage';
@@ -16,6 +17,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<AuthLayout />}>
         <Route path={routePaths.login} element={<LoginPage />} />
+        <Route path={routePaths.maintenance} element={<MaintenancePage />} />
       </Route>
 
       <Route element={<RequireAuth />}>

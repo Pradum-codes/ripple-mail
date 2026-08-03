@@ -1,5 +1,6 @@
 export const routePaths = {
   login: '/login',
+  maintenance: '/maintenance',
   dashboard: '/dashboard',
   compose: '/compose',
   scheduled: '/scheduled',

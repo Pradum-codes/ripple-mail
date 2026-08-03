@@ -8,11 +8,17 @@ if (!apiBaseUrl) {
 }
 
 type AuthTokenResolver = () => string | null;
+type ServiceUnavailableHandler = () => void;
 
 let authTokenResolver: AuthTokenResolver | null = null;
+let serviceUnavailableHandler: ServiceUnavailableHandler | null = null;
 
 export function setAuthTokenResolver(resolver: AuthTokenResolver | null) {
   authTokenResolver = resolver;
+}
+
+export function setServiceUnavailableHandler(handler: ServiceUnavailableHandler | null) {
+  serviceUnavailableHandler = handler;
 }
 
 function normalizeApiError(error: unknown): ApiError {
@@ -76,7 +82,15 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(normalizeApiError(error)),
+  (error) => {
+    const normalizedError = normalizeApiError(error);
+
+    if (normalizedError.status === 503) {
+      serviceUnavailableHandler?.();
+    }
+
+    return Promise.reject(normalizedError);
+  },
 );
 
 export { normalizeApiError };
