@@ -13,7 +13,7 @@ export interface HeaderProps {
 
 function Header({
   title,
-  logoText = 'R',
+  // logoText = 'R',
   userName = 'John Doe',
   userSubtitle = 'Placeholder user profile',
   onMenuClick,

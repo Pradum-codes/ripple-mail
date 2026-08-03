@@ -21,9 +21,9 @@ app.use(express.json());
 
 app.use("/api/campaigns", authenticate, campaignRoutes);
 app.use("/api/emails", authenticate,emailRoutes);
-app.use("/api/health", authenticate, healthRoutes);
 app.use("/api/senders", authenticate, senderRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/health", healthRoutes);
 app.use("/test", testRoutes);
 
 app.get("/", (_req, res) => {
